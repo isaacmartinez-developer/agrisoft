@@ -1,0 +1,330 @@
+:root{
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --accent:#16a34a;
+  --warn:#f59e0b;
+  --bad:#dc2626;
+  --border:rgba(0,0,0,.10);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  color:var(--text);
+
+  /* Imatge de fons */
+  background-image: url('../img/bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Vel blanc suau sobre la imatge (ajusta el 0.55-0.75 segons contrast) */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:rgba(255,255,255,.60);
+  pointer-events:none;
+  z-index:-1;
+}
+
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto;padding:18px}
+
+/* ======================================================
+   COMPONENTS BASE
+   ====================================================== */
+
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+
+/* Glass card */
+.card{
+  grid-column:span 12;
+  background: rgba(255,255,255,0.86);
+  border:1px solid rgba(0,0,0,0.10);
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.08);
+  backdrop-filter: blur(7px);
+}
+.login-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+
+.login-actions .btn{
+  width:100%;
+  justify-content:center;
+}
+
+
+@media(min-width:900px){
+  .span6{
+    justify-content: center;
+    
+  }
+  .span4{grid-column:span 4}
+  .span8{grid-column:span 8}
+  .span3{grid-column:span 3}
+}
+
+h1,h2,h3{margin:.2rem 0 .8rem 0}
+
+label{
+  display:block;
+  color:var(--muted);
+  font-size:.9rem;
+  margin:10px 0 6px
+}
+
+/* Inputs amb glass */
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,0.80);
+  color:var(--text);
+  backdrop-filter: blur(6px);
+}
+
+textarea{min-height:90px}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  text-align: center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.12);
+  background: rgba(22,163,74,0.12);
+  color:#065f46;
+  cursor:pointer;
+  backdrop-filter: blur(6px);
+}
+
+.btn:hover{
+  border-color: rgba(22,163,74,0.65);
+  background: rgba(22,163,74,0.18);
+}
+
+.btn.secondary{
+  background: rgba(255,255,255,0.55);
+  color:#374151;
+}
+
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 8px
+}
+
+th{
+  color:var(--muted);
+  font-weight:600;
+  text-align:left;
+  font-size:.9rem
+}
+
+/* Files taula glass */
+td{
+  padding:10px;
+  background: rgba(255,255,255,0.78);
+  border-top:1px solid rgba(0,0,0,.10);
+  border-bottom:1px solid rgba(0,0,0,.10);
+  backdrop-filter: blur(6px);
+}
+
+tr td:first-child{
+  border-left:1px solid rgba(0,0,0,.10);
+  border-top-left-radius:12px;
+  border-bottom-left-radius:12px
+}
+
+tr td:last-child{
+  border-right:1px solid rgba(0,0,0,.10);
+  border-top-right-radius:12px;
+  border-bottom-right-radius:12px
+}
+
+.small{color:var(--muted);font-size:.9rem}
+
+.kpi{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between
+}
+
+.kpi .n{
+  font-size:1.8rem;
+  font-weight:800
+}
+
+.flash{
+  padding:10px;
+  border-radius:12px;
+  background: rgba(22,163,74,0.10);
+  border:1px solid rgba(22,163,74,0.25);
+  margin:10px 0;
+  backdrop-filter: blur(6px);
+}
+
+.flash.bad{
+  background: rgba(220,38,38,0.08);
+  border-color: rgba(220,38,38,0.25);
+  color:#991b1b;
+}
+
+/* ======================================================
+   LAYOUT MENÚ LATERAL + TOPBAR (GLASS)
+   ====================================================== */
+
+.layout{
+  display:flex;
+  min-height:100vh;
+}
+
+/* Menú esquerra: glass */
+.sidebar{
+  width:260px;
+  background: rgba(255,255,255,0.60);
+  border-right:1px solid rgba(0,0,0,.10);
+  padding:18px 14px;
+  display:flex;
+  flex-direction:column;
+  position:sticky;
+  top:0;
+  height:100vh;
+  backdrop-filter: blur(12px);
+}
+
+.nav-vertical{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.nav-item{
+  padding:10px 12px;
+  border-radius:12px;
+  background: rgba(255,255,255,0.55);
+  border:1px solid rgba(0,0,0,.10);
+  transition:.15s;
+  backdrop-filter: blur(10px);
+}
+
+.nav-item:hover{
+  background: rgba(22,163,74,0.14);
+  border-color: rgba(22,163,74,0.40);
+}
+
+.nav-item.active{
+  background: rgba(22,163,74,0.22);
+  border-color: rgba(22,163,74,0.55);
+  color:#065f46;
+}
+
+.nav-sep{
+  height:1px;
+  background: rgba(0,0,0,.10);
+  margin:10px 0;
+}
+
+/* Contingut */
+.content{
+  flex:1;
+  overflow-x:hidden;
+}
+
+/* Header horitzontal: glass */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px 18px;
+  background: rgba(255,255,255,0.62);
+  border-bottom:1px solid rgba(0,0,0,.10);
+  backdrop-filter: blur(12px);
+}
+
+.topbar-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:900;
+  letter-spacing:.6px;
+}
+
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:3px;
+  background:var(--accent);
+}
+
+.topbar-user{
+  text-align:right;
+  line-height:1.15;
+}
+
+.topbar-user-name{
+  font-weight:800;
+}
+
+.topbar-user-meta{
+  color:var(--muted);
+  font-size:.85rem;
+  margin-top:4px;
+}
+
+/* ======================================================
+   PETITES MILLORES VISUALS
+   ====================================================== */
+
+hr{
+  border:none;
+  border-top:1px solid rgba(0,0,0,.10);
+  margin:14px 0;
+}
+
+/* focus bonic */
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color: rgba(22,163,74,0.55);
+  box-shadow: 0 0 0 4px rgba(22,163,74,0.12);
+}
+
+/* ======================================================
+   RESPONSIVE
+   ====================================================== */
+
+@media(max-width:900px){
+  .layout{flex-direction:column}
+
+  .sidebar{
+    width:100%;
+    height:auto;
+    position:relative;
+    border-right:none;
+    border-bottom:1px solid rgba(0,0,0,.10);
+  }
+
+  .nav-vertical{
+    flex-direction:row;
+    flex-wrap:wrap;
+  }
+
+  .nav-item{width:auto}
+}

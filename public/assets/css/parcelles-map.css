@@ -1,0 +1,158 @@
+.parcelles-map{
+  height:520px;
+  border-radius:12px;
+  overflow:hidden;
+  border:1px solid rgba(0,0,0,.08);
+}
+
+.parcelles-topbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:10px 0 12px;
+}
+
+.parcelles-stat{
+  flex:1;
+  min-width:180px;
+  background:rgba(0,0,0,.03);
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:12px;
+  padding:10px 12px;
+}
+
+.parcelles-stat__label{
+  font-size:12px;
+  opacity:.7;
+  margin-bottom:4px;
+}
+
+.parcelles-stat__value{
+  font-size:14px;
+  font-weight:600;
+}
+
+.parcelles-stat--hint{ flex:2; }
+
+/* Formulari de parcel·les: distribució més neta i ampla */
+.parcela-form{ margin-top:14px; }
+
+.parcela-form-grid{
+  display:grid;
+  grid-template-columns: minmax(240px, 1fr) 140px;
+  gap:12px;
+  align-items:start;
+  width:100%;
+}
+
+.parcela-field label{
+  display:block;
+  font-size:12px;
+  opacity:.75;
+  margin:0 0 6px;
+}
+
+.parcela-form input,
+.parcela-form textarea{
+  width:100%;
+  box-sizing:border-box;
+}
+
+.parcela-field--notes{ grid-column: 1 / -1; }
+
+.parcela-field--notes textarea{
+  min-height:84px;
+  resize:vertical;
+}
+
+.parcela-mode{
+  margin-top:6px;
+  font-size:12px;
+  opacity:.7;
+}
+
+.parcela-form-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+
+@media (max-width: 720px){
+  .parcela-form-grid{ grid-template-columns: 1fr; }
+  .parcela-field--area{ order:2; }
+  .parcela-field--notes{ order:3; }
+}
+
+/* Taula de parcel·les: fer que Nom, Àrea i Descripció es llegeixin bé */
+.table td.parcela-name{
+  min-width: 180px;
+  font-weight: 700;
+}
+
+.table td.parcela-area{
+  min-width: 110px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.table td.parcela-desc{
+  min-width: 260px;
+  max-width: 520px;
+  white-space: normal;
+  line-height: 1.35;
+}
+
+@media (max-width: 980px){
+  .table td.parcela-desc{ max-width: 340px; }
+}
+
+/* Millor llegibilitat als popups */
+.leaflet-popup-content{ margin:10px 12px; }
+
+/* Botons dins popup */
+.parcelles-popup-actions{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
+}
+
+/* Botons (popup + taula) */
+.parcelles-btn,
+.btn-action{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(255,255,255,.92);
+  cursor:pointer;
+  font-weight:600;
+  line-height:1;
+  transition:transform .06s ease, background .12s ease, box-shadow .12s ease;
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
+}
+
+.parcelles-btn:hover,
+.btn-action:hover{
+  background:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,.10);
+  transform:translateY(-1px);
+}
+
+.parcelles-btn:active,
+.btn-action:active{ transform:translateY(0); box-shadow:0 2px 8px rgba(0,0,0,.10); }
+
+.parcelles-btn--edit,
+.btn-action--edit{ border-color:rgba(16,185,129,.35); }
+.parcelles-btn--delete,
+.btn-action--delete{ border-color:rgba(239,68,68,.35); }
+
+.btn-action--delete{ background:rgba(239,68,68,.08); }
+.btn-action--edit{ background:rgba(16,185,129,.08); }
+
+/* Els botons del popup ja venen amb classe .parcelles-btn */
+
+/* Ajust del control measure perquè no tapi controls */
+.leaflet-control-measure{ box-shadow:none; }

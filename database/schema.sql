@@ -1,606 +1,964 @@
--- =========================================
--- MÒDUL 4 — GESTIÓ DE PERSONAL
--- =========================================
-
-CREATE TABLE TREBALLADOR (
-    idTreballador INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(150) NOT NULL,
-    fotografia VARCHAR(255),
-    document_identitat VARCHAR(50) UNIQUE NOT NULL,
-    data_naixement DATE,
-    lloc_naixement VARCHAR(150),
-    nacionalitat VARCHAR(100),
-    residencia VARCHAR(150),
-    telefon VARCHAR(30),
-    email VARCHAR(100),
-    adreca VARCHAR(255),
-    contacte_emergencia VARCHAR(150),
-    compte_bancari VARCHAR(34),
-    categoria_professional VARCHAR(100),
-    tipus_contracte VARCHAR(50),
-    data_inici DATE,
-    data_fi DATE,
-    historial_laboral TEXT,
-    formacio TEXT,
-    habilitats TEXT,
-    idiomes TEXT,
-    num_seguretat_social VARCHAR(50),
-    permis_treball VARCHAR(100)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE DEPARTAMENTS (
-    id_departament INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(150) NOT NULL
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE EQUIPS (
-    id_equip INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(150) NOT NULL,
-    id_responsable INT,
-    FOREIGN KEY (id_responsable) REFERENCES TREBALLADOR(idTreballador) ON DELETE SET NULL
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE DOCUMENTS_TREBALLADOR (
-    id_document INT AUTO_INCREMENT PRIMARY KEY,
-    idTreballador INT NOT NULL,
-    tipus_document VARCHAR(100),
-    fitxer VARCHAR(255),
-    data_carrega DATE,
-    data_caducitat DATE,
-    observacions TEXT,
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE CERTIFICACIONS (
-    id_cert INT AUTO_INCREMENT PRIMARY KEY,
-    idTreballador INT NOT NULL,
-    tipus_cert VARCHAR(150),
-    entitat_emissora VARCHAR(150),
-    data_obtencio DATE,
-    data_caducitat DATE,
-    document VARCHAR(255),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE TASQUES (
-    id_tasca INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(150) NOT NULL,
-    descripcio TEXT,
-    tipus VARCHAR(100),
-    zona VARCHAR(150),
-    data_inici_prevista DATE,
-    data_fi_prevista DATE,
-    personal_requerit INT,
-    qualificacions_requerides TEXT,
-    equipament TEXT
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE TREBALLADORS_EQUIPS (
-    idTreballador INT,
-    idEquip INT,
-    rol VARCHAR(100),
-    PRIMARY KEY (idTreballador, idEquip),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador) ON DELETE CASCADE,
-    FOREIGN KEY (idEquip) REFERENCES EQUIPS(id_equip) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE ASSIGNACIONS_TASCA (
-    id_assignacio INT AUTO_INCREMENT PRIMARY KEY,
-    id_tasca INT NOT NULL,
-    idTreballador INT NOT NULL,
-    data_assignacio DATE,
-    FOREIGN KEY (id_tasca) REFERENCES TASQUES(id_tasca) ON DELETE CASCADE,
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE REGISTRE_HORES (
-    id_registre INT AUTO_INCREMENT PRIMARY KEY,
-    idTreballador INT NOT NULL,
-    id_tasca INT,
-    data DATE,
-    hora_inici DATETIME,
-    hora_fi DATETIME,
-    pauses INT,
-    ubicacio VARCHAR(150),
-    incidencies TEXT,
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador) ON DELETE CASCADE,
-    FOREIGN KEY (id_tasca) REFERENCES TASQUES(id_tasca) ON DELETE SET NULL
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE VACANCES_PERMISOS (
-    id_perm INT AUTO_INCREMENT PRIMARY KEY,
-    idTreballador INT NOT NULL,
-    tipus VARCHAR(100),
-    data_inici DATE,
-    data_fi DATE,
-    estat VARCHAR(50),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador) ON DELETE CASCADE
-) ENGINE=InnoDB;
-
-
-
-
--- =========================================
--- MÒDUL 1 — Parcel·les i Cultiu
--- =========================================
-
-CREATE TABLE PARCELA (
-    idParcela INT PRIMARY KEY,
-    Nom VARCHAR(100),
-    Superficie DECIMAL(10,2),
-    CoordenadesGeo VARCHAR(255),
-    TipusSol VARCHAR(100),
-    PH DECIMAL(4,2),
-    MaterialOrganic VARCHAR(100),
-    Pendent VARCHAR(50),
-    Orientacio VARCHAR(50),
-    Infraestructures TEXT,
-    Documentacio TEXT,
-    EstatActual VARCHAR(100)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE SECTOR_CULTIU (
-    IdSector INT PRIMARY KEY,
-    NomSector VARCHAR(100),
-    DataPlantacio DATE,
-    MarcPlantacio VARCHAR(100),
-    NumArbres INT,
-    OrigenMaterial VARCHAR(255),
-    Superficie DECIMAL(10,2),
-    PrevisioProduccio DECIMAL(10,2),
-    SistemaFormacio VARCHAR(100),
-    IdCultiu INT,
-    EstatActual VARCHAR(100),
-    InversioInicial DECIMAL(12,2),
-    FOREIGN KEY (IdCultiu) REFERENCES PARCELA(idParcela)
-) ENGINE=InnoDB;
-
-CREATE TABLE ESPECIE (
-    Id INT AUTO_INCREMENT PRIMARY KEY,
-    Nom VARCHAR(100) NOT NULL,
-    tipus VARCHAR(50)
-) ENGINE=InnoDB;
-
-CREATE TABLE VARIETAT (
-    idVarietat INT PRIMARY KEY,
-    NomComu VARCHAR(100),
-    NomCientific VARCHAR(100),
-    Varietat VARCHAR(100),
-    NecessitatsHidriques VARCHAR(255),
-    QualitatsComercials VARCHAR(255),
-    Resistencies VARCHAR(255),
-    RutaFoto VARCHAR(255),
-    RendimentEsperat DECIMAL(10,2),
-    Especie VARCHAR(100),
-    ProductivitatMitjana DECIMAL(10,2),
-    Pol·linitzacio VARCHAR(100),
-    HoresFred INT,
-    CicleVegetatiu VARCHAR(50),
-    Cicle VARCHAR(50),
-    IdCultiu INT,
-    FOREIGN KEY (IdCultiu) REFERENCES SECTOR_CULTIU(IdSector)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE PLANTADA (
-    idPlantada INT PRIMARY KEY,
-    CondicionsClimàtiques TEXT,
-    Incidències TEXT,
-    RendimentObtingut DECIMAL(10,2),
-    DataInici DATE,
-    DataFi DATE,
-    idFila INT,
-    idVarietat INT,
-    idSector INT,
-    FOREIGN KEY (idVarietat) REFERENCES VARIETAT(idVarietat),
-    FOREIGN KEY (idSector) REFERENCES SECTOR_CULTIU(IdSector)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE FILA_ARBRES (
-    idFila INT PRIMARY KEY,
-    NumFila INT,
-    Longitud DECIMAL(10,2),
-    CoordenadesGeo VARCHAR(255),
-    idPlantada INT,
-    idSector INT,
-    FOREIGN KEY (idPlantada) REFERENCES PLANTADA(idPlantada),
-    FOREIGN KEY (idSector) REFERENCES SECTOR_CULTIU(IdSector)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE FOTO (
-    idFoto INT PRIMARY KEY,
-    UrlFoto VARCHAR(255),
-    Data DATE,
-    Descripcio TEXT,
-    IdSector INT,
-    FOREIGN KEY (IdSector) REFERENCES SECTOR_CULTIU(IdSector)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE SEGUIMENT_SECTOR (
-    idSeguiment INT PRIMARY KEY,
-    Data DATE,
-    EstatFenologic VARCHAR(255),
-    Creixement TEXT,
-    Incidencies TEXT,
-    Intervencions TEXT,
-    EstimacioCollita DECIMAL(10,2),
-    idPlantada INT,
-    idSector INT,
-    idTreballador INT,
-    FOREIGN KEY (idPlantada) REFERENCES PLANTADA(idPlantada),
-    FOREIGN KEY (idSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE CONTE (
-    IdParcela INT,
-    IdSector INT,
-    PRIMARY KEY (IdParcela, IdSector),
-    FOREIGN KEY (IdParcela) REFERENCES PARCELA(idParcela),
-    FOREIGN KEY (IdSector) REFERENCES SECTOR_CULTIU(IdSector)
-) ENGINE=InnoDB;
-
-
-
-
--- =========================================
--- MÒDUL 2 — Gestió agrícola
--- =========================================
-
-CREATE TABLE PRODUCTE (
-    idProducte INT PRIMARY KEY,
-    nomComercial VARCHAR(100),
-    tipus VARCHAR(100),
-    materiaActiva VARCHAR(100),
-    concentracio VARCHAR(100),
-    espectreAccio VARCHAR(255),
-    cultiusAutoritzats TEXT,
-    dosisRecomanada VARCHAR(50),
-    dosisMaxima VARCHAR(50),
-    terminiSeguretat VARCHAR(50),
-    classificacioTox VARCHAR(100),
-    restriccions TEXT,
-    compatibilitat TEXT,
-    numRegistre VARCHAR(50),
-    fabricant VARCHAR(100)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE ESTOC_PRODUCTE (
-    idEstoc INT PRIMARY KEY,
-    idProducte INT,
-    quantitatDisponible DECIMAL(10,2),
-    unitatMesura VARCHAR(20),
-    dataCompra DATE,
-    proveidor VARCHAR(255),
-    numLot VARCHAR(100),
-    dataCaducitat DATE,
-    ubicacioMagatzem VARCHAR(100),
-    preuUnitari DECIMAL(10,2),
-    FOREIGN KEY (idProducte) REFERENCES PRODUCTE(idProducte)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE TRACTAMENT (
-    idTractament INT PRIMARY KEY,
-    idSector INT,
-    dataAplicacio DATE,
-    metodeAplicacio VARCHAR(100),
-    condicionsAmbientals TEXT,
-    operari VARCHAR(100),
-    observacions TEXT,
-    idTreballador INT,
-    FOREIGN KEY (idSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE TRACTAMENT_PRODUCTE (
-    idTractament INT,
-    idProducte INT,
-    quantitatAplicada DECIMAL(10,2),
-    concentracioUsada VARCHAR(50),
-    PRIMARY KEY (idTractament, idProducte),
-    FOREIGN KEY (idTractament) REFERENCES TRACTAMENT(idTractament),
-    FOREIGN KEY (idProducte) REFERENCES PRODUCTE(idProducte)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE FERTILITZACIO (
-    idFertilitzacio INT PRIMARY KEY,
-    IdSector INT,
-    dataAplicacio DATE,
-    metodeAplicacio VARCHAR(100),
-    condicionsAmbientals TEXT,
-    operari VARCHAR(100),
-    observacions TEXT,
-    idTreballador INT,
-    FOREIGN KEY (IdSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE FERTILITZACIO_PRODUCTE (
-    idFertilitzacio INT,
-    idProducte INT,
-    quantitatAplicada DECIMAL(10,2),
-    concentracioN DECIMAL(5,2),
-    concentracioP DECIMAL(5,2),
-    concentracioK DECIMAL(5,2),
-    PRIMARY KEY (idFertilitzacio, idProducte),
-    FOREIGN KEY (idFertilitzacio) REFERENCES FERTILITZACIO(idFertilitzacio),
-    FOREIGN KEY (idProducte) REFERENCES PRODUCTE(idProducte)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE SENSOR (
-    idSensor INT PRIMARY KEY,
-    tipus VARCHAR(100),
-    ubicacio VARCHAR(100),
-    IdSector INT,
-    dataInstalacio DATE,
-    idTreballador INT,
-    FOREIGN KEY (IdSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE LECTURA_SENSOR (
-    idLectura INT PRIMARY KEY,
-    idSensor INT,
-    dataLectura DATE,
-    valor DECIMAL(10,2),
-    unitat VARCHAR(50),
-    FOREIGN KEY (idSensor) REFERENCES SENSOR(idSensor)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE ANALISI_NUTRICIONAL (
-    idAnalisi INT PRIMARY KEY,
-    IdParcela INT,
-    tipus VARCHAR(100),
-    dataAnalisi DATE,
-    resultatN DECIMAL(10,2),
-    resultatP DECIMAL(10,2),
-    resultatK DECIMAL(10,2),
-    altresResultats TEXT,
-    FOREIGN KEY (IdParcela) REFERENCES PARCELA(idParcela)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE PLANIFICACIO_TRACTAMENT (
-    idPlanificacio INT PRIMARY KEY,
-    idSector INT,
-    dataPrevista DATE,
-    plagaObjectiu VARCHAR(100),
-    estatFenologic VARCHAR(100),
-    tipusTractament VARCHAR(100),
-    observacions TEXT,
-    responsable VARCHAR(100),
-    idTreballador INT,
-    FOREIGN KEY (idSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE PLANIFICACIO_FERTILITZACIO (
-    idPlanificacio INT PRIMARY KEY,
-    idSector INT,
-    dataPrevista DATE,
-    objectiu VARCHAR(100),
-    tipusFertilitzacio VARCHAR(100),
-    nutrientsPrevistos TEXT,
-    observacions TEXT,
-    responsable VARCHAR(100),
-    idTreballador INT,
-    FOREIGN KEY (idSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE QUADERN_EXPLOTACIO (
-    idRegistre INT PRIMARY KEY,
-    IdParcela INT,
-    IdSector INT,
-    IdProducte INT,
-    tipusAplicacio VARCHAR(100),
-    plagaMalaltia VARCHAR(100),
-    cultiu VARCHAR(100),
-    estatFenologic VARCHAR(100),
-    dosisAplicada VARCHAR(50),
-    volumCaldo VARCHAR(50),
-    dataAplicacio DATE,
-    terminiSeguretat VARCHAR(50),
-    observacions TEXT,
-    responsable VARCHAR(100),
-    idTreballador INT,
-    FOREIGN KEY (IdParcela) REFERENCES PARCELA(idParcela),
-    FOREIGN KEY (IdSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idProducte) REFERENCES PRODUCTE(idProducte),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE HERBICIDA (
-    idHerbicida INT PRIMARY KEY,
-    nomComercial VARCHAR(100),
-    materiaActiva VARCHAR(100),
-    tipusHerba VARCHAR(100),
-    modeAccio VARCHAR(100),
-    dosisMaxima VARCHAR(50),
-    registreLegal VARCHAR(50),
-    fabricant VARCHAR(100)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE APLICACIO_HERBICIDA (
-    idAplicacio INT PRIMARY KEY,
-    idSector INT,
-    idHerbicida INT,
-    dataAplicacio DATE,
-    dosisAplicada VARCHAR(50),
-    condicionsAmbientals TEXT,
-    temperatura VARCHAR(50),
-    vent VARCHAR(50),
-    observacions TEXT,
-    responsable VARCHAR(100),
-    idTreballador INT,
-    FOREIGN KEY (idSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idHerbicida) REFERENCES HERBICIDA(idHerbicida),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-
--- =========================================
--- MÒDUL 3 — Producció i Comercialització
--- =========================================
-
-CREATE TABLE COLLITA (
-    idCollita INT PRIMARY KEY,
-    IdSector INT,
-    idVarietat INT,
-    dataInici DATE,
-    dataFi DATE,
-    quantitat DECIMAL(10,2),
-    unitat VARCHAR(20),
-    condicionsAmbientals TEXT,
-    estatFenologic VARCHAR(100),
-    maduresa VARCHAR(100),
-    incidencies TEXT,
-    observacions TEXT,
-    idTreballador INT,
-    FOREIGN KEY (IdSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idVarietat) REFERENCES VARIETAT(idVarietat),
-    FOREIGN KEY (idTreballador) REFERENCES TREBALLADOR(idTreballador)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE LOT_PRODUCCIO (
-    idLot INT PRIMARY KEY,
-    codiLot VARCHAR(100),
-    idCollita INT,
-    dataCreacio DATE,
-    quantitat DECIMAL(10,2),
-    unitat VARCHAR(20),
-    estat VARCHAR(100),
-    observacions TEXT,
-    FOREIGN KEY (idCollita) REFERENCES COLLITA(idCollita)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE CONTROL_QUALITAT (
-    idControl INT PRIMARY KEY,
-    idLot INT,
-    dataControl DATE,
-    calibreMin DECIMAL(5,2),
-    calibreMax DECIMAL(5,2),
-    colorScore DECIMAL(5,2),
-    fermesaScore DECIMAL(5,2),
-    percentatgeDefectes DECIMAL(5,2),
-    organolepticScore DECIMAL(5,2),
-    observacions TEXT,
-    FOREIGN KEY (idLot) REFERENCES LOT_PRODUCCIO(idLot)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE CLIENT (
-    idClient INT PRIMARY KEY,
-    nom VARCHAR(100),
-    tipus VARCHAR(50),
-    contacte VARCHAR(100),
-    direccio VARCHAR(255),
-    requisits TEXT
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE MAQUINARIA (
-    idMaquina INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL,
-    tipus VARCHAR(100),
-    matricula VARCHAR(20),
-    tipusCombustible VARCHAR(50),
-    cavalls INT
-) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS USUARIS (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nom VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB;
-
-
-CREATE TABLE LOT_CLIENT (
-    idLot INT,
-    idClient INT,
-    dataAssignacio DATE,
-    quantitat DECIMAL(10,2),
-    unitat VARCHAR(20),
-    PRIMARY KEY (idLot, idClient),
-    FOREIGN KEY (idLot) REFERENCES LOT_PRODUCCIO(idLot),
-    FOREIGN KEY (idClient) REFERENCES CLIENT(idClient)
-) ENGINE=InnoDB;
-
-
-
-CREATE TABLE PREVISIO_COLLITA (
-    idPrevisio INT PRIMARY KEY,
-    idSector INT,
-    idVarietat INT,
-    campanya VARCHAR(50),
-    dataPrevisio DATE,
-    quantitatPrevista DECIMAL(10,2),
-    unitat VARCHAR(20),
-    observacions TEXT,
-    FOREIGN KEY (idSector) REFERENCES SECTOR_CULTIU(IdSector),
-    FOREIGN KEY (idVarietat) REFERENCES VARIETAT(idVarietat)
-) ENGINE=InnoDB;
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 09-02-2026 a las 22:05:37
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de datos: `agrisoft`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `alerta`
+--
+
+CREATE TABLE `alerta` (
+  `id` int(11) NOT NULL,
+  `type` enum('stock_baix','caducitat','tasca','venciment','plaga','clima','risc','altres') NOT NULL,
+  `title` varchar(160) NOT NULL,
+  `body` text DEFAULT NULL,
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `creat` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `analisis`
+--
+
+CREATE TABLE `analisis` (
+  `id` int(11) NOT NULL,
+  `analitzat` date NOT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `tipus_anàlisi` enum('sol','fulla') NOT NULL,
+  `resum` text DEFAULT NULL,
+  `ruta_fitxer` varchar(255) DEFAULT NULL,
+  `creat` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `certificacions_treballadors`
+--
+
+CREATE TABLE `certificacions_treballadors` (
+  `id` int(11) NOT NULL,
+  `id_treballador` int(11) NOT NULL,
+  `cert_name` varchar(160) NOT NULL,
+  `valid_until` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `collites`
+--
+
+CREATE TABLE `collites` (
+  `id` int(11) NOT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `varietat_id` int(11) DEFAULT NULL,
+  `any_campanya` int(11) NOT NULL,
+  `recollit` date NOT NULL,
+  `kg` decimal(12,2) NOT NULL,
+  `grau_qualitat` varchar(50) DEFAULT NULL,
+  `protocol_notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `collites_v2`
+--
+
+CREATE TABLE `collites_v2` (
+  `id` int(11) NOT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `cultiu_id` int(11) NOT NULL,
+  `varietat_id` int(11) DEFAULT NULL,
+  `data_collita` date NOT NULL,
+  `quantitat_kg` decimal(12,2) NOT NULL,
+  `qualitat` varchar(120) DEFAULT NULL,
+  `humitat_pct` decimal(5,2) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `creat` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cultius`
+--
+
+CREATE TABLE `cultius` (
+  `id` int(11) NOT NULL,
+  `name` varchar(120) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cultius_parceles`
+--
+
+CREATE TABLE `cultius_parceles` (
+  `id` int(11) NOT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `cultiu_id` int(11) NOT NULL,
+  `varietat_id` int(11) DEFAULT NULL,
+  `start_date` date NOT NULL,
+  `data_final` date DEFAULT NULL,
+  `densitat_de_arbres_per_ha` decimal(10,2) DEFAULT NULL,
+  `data_esperada_de_collita` date DEFAULT NULL,
+  `problemes` text DEFAULT NULL,
+  `rendiment_kg` decimal(12,2) DEFAULT NULL,
+  `notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `documents_treballadors`
+--
+
+CREATE TABLE `documents_treballadors` (
+  `id` int(11) NOT NULL,
+  `id_treballador` int(11) NOT NULL,
+  `document_tipus` varchar(120) NOT NULL,
+  `ruta_fitxer` varchar(255) DEFAULT NULL,
+  `expire` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `files_arbres`
+--
+
+CREATE TABLE `files_arbres` (
+  `id` int(11) NOT NULL,
+  `sector_id` int(11) NOT NULL,
+  `codi_fila` varchar(40) NOT NULL,
+  `recompte_de_arbres` int(11) NOT NULL DEFAULT 0,
+  `notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `files_parceles`
+--
+
+CREATE TABLE `files_parceles` (
+  `id` int(11) NOT NULL,
+  `parcela_id` int(11) NOT NULL,
+  `ruta_fitxer` varchar(255) NOT NULL,
+  `tipus_fitxer` enum('photo','document') NOT NULL,
+  `pujat` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `fito_productes`
+--
+
+CREATE TABLE `fito_productes` (
+  `id` int(11) NOT NULL,
+  `name` varchar(160) NOT NULL,
+  `substancia_activa` varchar(160) DEFAULT NULL,
+  `unitat` enum('l','kg','u') NOT NULL DEFAULT 'l',
+  `stock` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `stock_baix` decimal(10,2) NOT NULL DEFAULT 5.00,
+  `expiry_date` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `lots`
+--
+
+CREATE TABLE `lots` (
+  `id` int(11) NOT NULL,
+  `collita_id` int(11) NOT NULL,
+  `codi_lot` varchar(40) NOT NULL,
+  `nom_client` varchar(160) DEFAULT NULL,
+  `creat` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `maquinaria`
+--
+
+CREATE TABLE `maquinaria` (
+  `idMaquina` int(11) NOT NULL,
+  `nom` varchar(100) NOT NULL,
+  `tipus` varchar(100) DEFAULT NULL,
+  `matricula` varchar(20) DEFAULT NULL,
+  `tipusCombustible` varchar(50) DEFAULT NULL,
+  `cavalls` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `observacio_plagues`
+--
+
+CREATE TABLE `observacio_plagues` (
+  `id` int(11) NOT NULL,
+  `observat` date NOT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `nom_plaga` varchar(160) NOT NULL,
+  `gravetat` enum('baixa','mitjana','alta') NOT NULL DEFAULT 'baixa',
+  `notes` text DEFAULT NULL,
+  `creat` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `parcela`
+--
+
+CREATE TABLE `parcela` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `gps_lat` double DEFAULT NULL,
+  `gps_lng` double DEFAULT NULL,
+  `area_ha` double DEFAULT NULL,
+  `tipus_sòl` varchar(255) DEFAULT NULL,
+  `pendent_pct` double DEFAULT NULL,
+  `infraestructures` text DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `creat` timestamp NOT NULL DEFAULT current_timestamp(),
+  `polygon_geojson` longtext DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `parcela_punt`
+--
+
+CREATE TABLE `parcela_punt` (
+  `id` int(11) NOT NULL,
+  `parcela_id` int(11) NOT NULL,
+  `idx` int(11) NOT NULL,
+  `lat` double NOT NULL,
+  `lng` double NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `plans_tractament`
+--
+
+CREATE TABLE `plans_tractament` (
+  `id` int(11) NOT NULL,
+  `title` varchar(160) NOT NULL,
+  `planned_on` date NOT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `status` enum('pendent','fet','cancel·lat') NOT NULL DEFAULT 'pendent',
+  `creat` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `registre_hores`
+--
+
+CREATE TABLE `registre_hores` (
+  `id_registre` int(11) NOT NULL,
+  `idTreballador` int(11) NOT NULL,
+  `data` date NOT NULL,
+  `hora_inici` datetime DEFAULT NULL,
+  `hora_fi` datetime DEFAULT NULL,
+  `pauses` int(11) DEFAULT 0,
+  `estat` enum('pendent','treballant','pausat','finalitzat') NOT NULL DEFAULT 'pendent',
+  `ubicacio` varchar(150) DEFAULT NULL,
+  `incidencies` text DEFAULT NULL,
+  `creat` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `resgistres_treball`
+--
+
+CREATE TABLE `resgistres_treball` (
+  `id` int(11) NOT NULL,
+  `id_treballador` int(11) NOT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `work_date` date NOT NULL,
+  `hours` decimal(6,2) NOT NULL,
+  `task` varchar(160) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `sectors`
+--
+
+CREATE TABLE `sectors` (
+  `id` int(11) NOT NULL,
+  `parcela_id` int(11) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `area_ha` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `notes` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `sector_cultiu`
+--
+
+CREATE TABLE `sector_cultiu` (
+  `id` int(11) NOT NULL,
+  `parcela_id` int(11) NOT NULL,
+  `nom_sector` varchar(100) NOT NULL,
+  `data_plantacio` date DEFAULT NULL,
+  `marc_plantacio` varchar(100) DEFAULT NULL,
+  `num_arbres` int(11) DEFAULT NULL,
+  `origen_material` varchar(255) DEFAULT NULL,
+  `superficie` decimal(10,2) DEFAULT NULL,
+  `previsio_produccio` decimal(10,2) DEFAULT NULL,
+  `sistema_formacio` varchar(100) DEFAULT NULL,
+  `cultiu_id` int(11) DEFAULT NULL,
+  `estat_actual` varchar(100) DEFAULT NULL,
+  `inversio_inicial` decimal(12,2) DEFAULT NULL,
+  `creat` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tasques`
+--
+
+CREATE TABLE `tasques` (
+  `id` int(11) NOT NULL,
+  `title` varchar(160) NOT NULL,
+  `description` text DEFAULT NULL,
+  `assigned_to_id_treballador` int(11) DEFAULT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `due_date` date DEFAULT NULL,
+  `status` enum('pendent','en_curs','fet') NOT NULL DEFAULT 'pendent',
+  `creat` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tractaments`
+--
+
+CREATE TABLE `tractaments` (
+  `id` int(11) NOT NULL,
+  `parcela_id` int(11) DEFAULT NULL,
+  `sector_id` int(11) DEFAULT NULL,
+  `fila_id` int(11) DEFAULT NULL,
+  `producte_id` int(11) NOT NULL,
+  `aplicat` date NOT NULL,
+  `dosis_hectarea` decimal(10,2) NOT NULL,
+  `dosis_total` decimal(10,2) NOT NULL,
+  `temps` varchar(160) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
+  `created_by` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `treballadors`
+--
+
+CREATE TABLE `treballadors` (
+  `id` int(11) NOT NULL,
+  `nom_complet` varchar(160) NOT NULL,
+  `telefon` varchar(40) DEFAULT NULL,
+  `rol_de_treball` varchar(80) DEFAULT NULL,
+  `cost_hora` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuaris`
+--
+
+CREATE TABLE `usuaris` (
+  `id` int(11) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `email` varchar(190) NOT NULL,
+  `contrasenya_enciptada` varchar(255) NOT NULL,
+  `role` enum('admin','manager','treballador') NOT NULL DEFAULT 'manager',
+  `creat` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuaris`
+--
+
+INSERT INTO `usuaris` (`id`, `name`, `email`, `contrasenya_enciptada`, `role`, `creat`) VALUES
+(50, 'admin', 'admin@agrisoft.com', '$2y$10$JmHRsba5rUqGgDx/kOw9z.IHv1HrfJG7GnY6z2fFdxq/XzGtxpS1O', 'admin', '2026-02-09 21:02:20'),
+(51, 'treballador', 'treballador@agrisoft.com', '$2y$10$DwHoPYw1ZDIDu/PAmmYfhuyPOqVuNF/o/.KK9wf1iGH7NtRNGjLO6', 'treballador', '2026-02-09 21:03:34'),
+(52, 'manager', 'manager@agrisoft.com', '$2y$10$7eVmmoU9sU0/3dXx2KO1y.VlpzXiNAjY5GOkEPfINoDdP0yLkj4HS', 'manager', '2026-02-09 21:03:50');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `varietats`
+--
+
+CREATE TABLE `varietats` (
+  `id` int(11) NOT NULL,
+  `cultiu_id` int(11) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `informacio_agronomica` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `alerta`
+--
+ALTER TABLE `alerta`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `analisis`
+--
+ALTER TABLE `analisis`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`),
+  ADD KEY `creat` (`creat`);
+
+--
+-- Indices de la tabla `certificacions_treballadors`
+--
+ALTER TABLE `certificacions_treballadors`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_treballador` (`id_treballador`);
+
+--
+-- Indices de la tabla `collites`
+--
+ALTER TABLE `collites`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`),
+  ADD KEY `varietat_id` (`varietat_id`);
+
+--
+-- Indices de la tabla `collites_v2`
+--
+ALTER TABLE `collites_v2`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`),
+  ADD KEY `cultiu_id` (`cultiu_id`),
+  ADD KEY `varietat_id` (`varietat_id`);
+
+--
+-- Indices de la tabla `cultius`
+--
+ALTER TABLE `cultius`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `cultius_parceles`
+--
+ALTER TABLE `cultius_parceles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`),
+  ADD KEY `cultiu_id` (`cultiu_id`),
+  ADD KEY `varietat_id` (`varietat_id`);
+
+--
+-- Indices de la tabla `documents_treballadors`
+--
+ALTER TABLE `documents_treballadors`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_treballador` (`id_treballador`);
+
+--
+-- Indices de la tabla `files_arbres`
+--
+ALTER TABLE `files_arbres`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sector_id` (`sector_id`);
+
+--
+-- Indices de la tabla `files_parceles`
+--
+ALTER TABLE `files_parceles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`);
+
+--
+-- Indices de la tabla `fito_productes`
+--
+ALTER TABLE `fito_productes`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `lots`
+--
+ALTER TABLE `lots`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codi_lot` (`codi_lot`),
+  ADD KEY `collita_id` (`collita_id`);
+
+--
+-- Indices de la tabla `maquinaria`
+--
+ALTER TABLE `maquinaria`
+  ADD PRIMARY KEY (`idMaquina`);
+
+--
+-- Indices de la tabla `observacio_plagues`
+--
+ALTER TABLE `observacio_plagues`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`),
+  ADD KEY `creat` (`creat`);
+
+--
+-- Indices de la tabla `parcela`
+--
+ALTER TABLE `parcela`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `parcela_punt`
+--
+ALTER TABLE `parcela_punt`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_parcela_vertex` (`parcela_id`,`idx`);
+
+--
+-- Indices de la tabla `plans_tractament`
+--
+ALTER TABLE `plans_tractament`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`),
+  ADD KEY `creat` (`creat`);
+
+--
+-- Indices de la tabla `registre_hores`
+--
+ALTER TABLE `registre_hores`
+  ADD PRIMARY KEY (`id_registre`),
+  ADD KEY `idTreballador` (`idTreballador`);
+
+--
+-- Indices de la tabla `resgistres_treball`
+--
+ALTER TABLE `resgistres_treball`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_treballador` (`id_treballador`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`);
+
+--
+-- Indices de la tabla `sectors`
+--
+ALTER TABLE `sectors`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`);
+
+--
+-- Indices de la tabla `sector_cultiu`
+--
+ALTER TABLE `sector_cultiu`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_sector_parcela` (`parcela_id`),
+  ADD KEY `idx_sector_cultiu` (`cultiu_id`);
+
+--
+-- Indices de la tabla `tasques`
+--
+ALTER TABLE `tasques`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `assigned_to_id_treballador` (`assigned_to_id_treballador`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`);
+
+--
+-- Indices de la tabla `tractaments`
+--
+ALTER TABLE `tractaments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `parcela_id` (`parcela_id`),
+  ADD KEY `sector_id` (`sector_id`),
+  ADD KEY `fila_id` (`fila_id`),
+  ADD KEY `producte_id` (`producte_id`),
+  ADD KEY `created_by` (`created_by`);
+
+--
+-- Indices de la tabla `treballadors`
+--
+ALTER TABLE `treballadors`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `usuaris`
+--
+ALTER TABLE `usuaris`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indices de la tabla `varietats`
+--
+ALTER TABLE `varietats`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cultiu_id` (`cultiu_id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `alerta`
+--
+ALTER TABLE `alerta`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `analisis`
+--
+ALTER TABLE `analisis`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `certificacions_treballadors`
+--
+ALTER TABLE `certificacions_treballadors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `collites`
+--
+ALTER TABLE `collites`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `collites_v2`
+--
+ALTER TABLE `collites_v2`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `cultius`
+--
+ALTER TABLE `cultius`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `cultius_parceles`
+--
+ALTER TABLE `cultius_parceles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `documents_treballadors`
+--
+ALTER TABLE `documents_treballadors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `files_arbres`
+--
+ALTER TABLE `files_arbres`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `files_parceles`
+--
+ALTER TABLE `files_parceles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `fito_productes`
+--
+ALTER TABLE `fito_productes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `lots`
+--
+ALTER TABLE `lots`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `maquinaria`
+--
+ALTER TABLE `maquinaria`
+  MODIFY `idMaquina` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `observacio_plagues`
+--
+ALTER TABLE `observacio_plagues`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `parcela`
+--
+ALTER TABLE `parcela`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `parcela_punt`
+--
+ALTER TABLE `parcela_punt`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `plans_tractament`
+--
+ALTER TABLE `plans_tractament`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `registre_hores`
+--
+ALTER TABLE `registre_hores`
+  MODIFY `id_registre` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `resgistres_treball`
+--
+ALTER TABLE `resgistres_treball`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `sectors`
+--
+ALTER TABLE `sectors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `sector_cultiu`
+--
+ALTER TABLE `sector_cultiu`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `tasques`
+--
+ALTER TABLE `tasques`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `tractaments`
+--
+ALTER TABLE `tractaments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `treballadors`
+--
+ALTER TABLE `treballadors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `usuaris`
+--
+ALTER TABLE `usuaris`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+
+--
+-- AUTO_INCREMENT de la tabla `varietats`
+--
+ALTER TABLE `varietats`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `analisis`
+--
+ALTER TABLE `analisis`
+  ADD CONSTRAINT `analisis_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `analisis_ibfk_2` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `analisis_ibfk_3` FOREIGN KEY (`creat`) REFERENCES `usuaris` (`id`);
+
+--
+-- Filtros para la tabla `certificacions_treballadors`
+--
+ALTER TABLE `certificacions_treballadors`
+  ADD CONSTRAINT `certificacions_treballadors_ibfk_1` FOREIGN KEY (`id_treballador`) REFERENCES `treballadors` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `collites`
+--
+ALTER TABLE `collites`
+  ADD CONSTRAINT `collites_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `collites_ibfk_2` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `collites_ibfk_3` FOREIGN KEY (`varietat_id`) REFERENCES `varietats` (`id`);
+
+--
+-- Filtros para la tabla `collites_v2`
+--
+ALTER TABLE `collites_v2`
+  ADD CONSTRAINT `collites_v2_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `collites_v2_ibfk_2` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `collites_v2_ibfk_3` FOREIGN KEY (`cultiu_id`) REFERENCES `cultius` (`id`),
+  ADD CONSTRAINT `collites_v2_ibfk_4` FOREIGN KEY (`varietat_id`) REFERENCES `varietats` (`id`);
+
+--
+-- Filtros para la tabla `cultius_parceles`
+--
+ALTER TABLE `cultius_parceles`
+  ADD CONSTRAINT `cultius_parceles_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `cultius_parceles_ibfk_2` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `cultius_parceles_ibfk_3` FOREIGN KEY (`cultiu_id`) REFERENCES `cultius` (`id`),
+  ADD CONSTRAINT `cultius_parceles_ibfk_4` FOREIGN KEY (`varietat_id`) REFERENCES `varietats` (`id`);
+
+--
+-- Filtros para la tabla `documents_treballadors`
+--
+ALTER TABLE `documents_treballadors`
+  ADD CONSTRAINT `documents_treballadors_ibfk_1` FOREIGN KEY (`id_treballador`) REFERENCES `treballadors` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `files_arbres`
+--
+ALTER TABLE `files_arbres`
+  ADD CONSTRAINT `files_arbres_ibfk_1` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `files_parceles`
+--
+ALTER TABLE `files_parceles`
+  ADD CONSTRAINT `files_parceles_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `lots`
+--
+ALTER TABLE `lots`
+  ADD CONSTRAINT `lots_ibfk_1` FOREIGN KEY (`collita_id`) REFERENCES `collites` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `observacio_plagues`
+--
+ALTER TABLE `observacio_plagues`
+  ADD CONSTRAINT `observacio_plagues_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `observacio_plagues_ibfk_2` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `observacio_plagues_ibfk_3` FOREIGN KEY (`creat`) REFERENCES `usuaris` (`id`);
+
+--
+-- Filtros para la tabla `parcela_punt`
+--
+ALTER TABLE `parcela_punt`
+  ADD CONSTRAINT `fk_parcela_punt_parcela` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `plans_tractament`
+--
+ALTER TABLE `plans_tractament`
+  ADD CONSTRAINT `plans_tractament_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `plans_tractament_ibfk_2` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `plans_tractament_ibfk_3` FOREIGN KEY (`creat`) REFERENCES `usuaris` (`id`);
+
+--
+-- Filtros para la tabla `registre_hores`
+--
+ALTER TABLE `registre_hores`
+  ADD CONSTRAINT `registre_hores_ibfk_1` FOREIGN KEY (`idTreballador`) REFERENCES `treballadors` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `resgistres_treball`
+--
+ALTER TABLE `resgistres_treball`
+  ADD CONSTRAINT `resgistres_treball_ibfk_1` FOREIGN KEY (`id_treballador`) REFERENCES `treballadors` (`id`),
+  ADD CONSTRAINT `resgistres_treball_ibfk_2` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `resgistres_treball_ibfk_3` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL;
+
+--
+-- Filtros para la tabla `sectors`
+--
+ALTER TABLE `sectors`
+  ADD CONSTRAINT `sectors_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `sector_cultiu`
+--
+ALTER TABLE `sector_cultiu`
+  ADD CONSTRAINT `fk_sector_cultiu_cultiu` FOREIGN KEY (`cultiu_id`) REFERENCES `cultius` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_sector_cultiu_parcela` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE CASCADE;
+
+--
+-- Filtros para la tabla `tasques`
+--
+ALTER TABLE `tasques`
+  ADD CONSTRAINT `tasques_ibfk_1` FOREIGN KEY (`assigned_to_id_treballador`) REFERENCES `treballadors` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `tasques_ibfk_2` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `tasques_ibfk_3` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL;
+
+--
+-- Filtros para la tabla `tractaments`
+--
+ALTER TABLE `tractaments`
+  ADD CONSTRAINT `tractaments_ibfk_1` FOREIGN KEY (`parcela_id`) REFERENCES `parcela` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `tractaments_ibfk_2` FOREIGN KEY (`sector_id`) REFERENCES `sectors` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `tractaments_ibfk_3` FOREIGN KEY (`fila_id`) REFERENCES `files_arbres` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `tractaments_ibfk_4` FOREIGN KEY (`producte_id`) REFERENCES `fito_productes` (`id`),
+  ADD CONSTRAINT `tractaments_ibfk_5` FOREIGN KEY (`created_by`) REFERENCES `usuaris` (`id`);
+
+--
+-- Filtros para la tabla `varietats`
+--
+ALTER TABLE `varietats`
+  ADD CONSTRAINT `varietats_ibfk_1` FOREIGN KEY (`cultiu_id`) REFERENCES `cultius` (`id`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
